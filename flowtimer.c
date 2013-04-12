@@ -26,6 +26,7 @@ int main(int argc,char **argv) {
     printf("pcap_open_live(): %s\n",errbuf);
     exit(1);
   } 
+
   
 /* ... and loop */ 
   int out = pcap_loop(descr,-1,pcap_callback,NULL); 

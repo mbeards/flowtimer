@@ -3,6 +3,8 @@
 
 #include "flowtimer.h"
 
+#define _BSD_SOURCE 1
+
 #include <pcap.h> 
 #include <stdio.h> 
 #include <string.h>

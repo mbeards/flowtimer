@@ -36,7 +36,9 @@
 #include <unistd.h>
 
 #include "flow.h"
+#include "rib.h"
 
 struct flow* flowtable;
+struct route* routingtable;
 
 #endif

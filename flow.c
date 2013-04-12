@@ -3,7 +3,12 @@
 
 
 void print_flow(struct flow * f) {
-  fprintf(stdout,"%ld.%ld %s->%s\n",f->timestamp.tv_sec, f->timestamp.tv_usec, inet_ntoa(f->ip_src), inet_ntoa(f->ip_dst));
+  char src_str[INET_ADDRSTRLEN];
+  char dst_str[INET_ADDRSTRLEN];
+
+  inet_ntop(AF_INET, &f->ip_src, src_str, INET_ADDRSTRLEN);
+  inet_ntop(AF_INET, &f->ip_dst, dst_str, INET_ADDRSTRLEN);
+  fprintf(stdout,"%ld.%ld %s->%s\n",f->timestamp.tv_sec, f->timestamp.tv_usec, src_str, dst_str);
 }
 
 int match_flow(struct flow * f) {
@@ -58,6 +63,8 @@ struct timeval rtt_get(struct flow * f) {
       if(curr == flowtable) {
         flowtable = NULL;
       }
+
+      free(curr);
 
       return rtt;
     }

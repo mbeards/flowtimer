@@ -42,7 +42,7 @@ u_char* ip_handler (u_char *args,const struct pcap_pkthdr* pkthdr, const u_char*
 
   off = ntohs(ip->ip_off);
   
-  fprintf(stdout,"%s:%u->%s:%u ",inet_ntoa(ip->ip_src), tcp->th_sport,inet_ntoa(ip->ip_dst), tcp->th_dport);
+  fprintf(stdout,"IPH %s:%u->%s:%u ",inet_ntoa(ip->ip_src), tcp->th_sport,inet_ntoa(ip->ip_dst), tcp->th_dport);
   if(NOISY) {
     fprintf(stdout,"tos %u len %u off %u ttl %u prot %u cksum %u ", ip->ip_tos, len, off, ip->ip_ttl,ip->ip_p, ip->ip_sum);
 
@@ -67,13 +67,13 @@ struct flow* flow_handler (u_char *args,const struct pcap_pkthdr* pkthdr, const 
   len     = ntohs(ip->ip_len); /* get packer length */
   version = IP_V(ip);          /* get ip version    */
 
-  //check to see that we don't have any matching unexpired flows
 
   struct flow* out = (struct flow*)(malloc (sizeof(struct flow)));
   out->ip_src = ip->ip_src;
   out->ip_dst = ip->ip_dst;
   out->timestamp = pkthdr->ts;
   out->last_seen = pkthdr->ts;
+  out->route = 0;
 
   return out;
 }
@@ -87,8 +87,8 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
   if (type == ETHERTYPE_IP) {
     long int sec = pkthdr->ts.tv_sec;
     long int usec = pkthdr->ts.tv_usec;
-//  ip_handler(args, pkthdr, packet);
     struct flow* f = flow_handler(args, pkthdr, packet);
+
 
     int match = match_flow(f);
     /*if(match == 1) {
@@ -97,7 +97,13 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
       //Match, so remove from flow table and write out rtt
       //fprintf(stdout, "Match reverse\n");
       struct timeval rtt = rtt_get(f);
-      fprintf(stdout, "%15s->%15s RTT: %ld.%ld\n", inet_ntoa(f->ip_src), inet_ntoa(f->ip_dst), rtt.tv_sec, rtt.tv_usec);
+      char src_str[INET_ADDRSTRLEN];
+      inet_ntop(AF_INET, &f->ip_src, src_str, INET_ADDRSTRLEN);
+      char dst_str[INET_ADDRSTRLEN];
+      inet_ntop(AF_INET, &f->ip_dst, dst_str, INET_ADDRSTRLEN);
+
+      fprintf(stdout, "%15s->%15s RTT: %ld.%ld\n",src_str, dst_str, rtt.tv_sec, rtt.tv_usec);
+      free(f);
     } else {
       //No match, so add to flow table
       insert_flow(f);
