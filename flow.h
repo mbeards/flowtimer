@@ -9,8 +9,7 @@ struct flow {
   struct timeval timestamp;
   struct timeval last_seen;
   int route;
-  struct flow* next;
-  struct flow* last;
+  LIST_ENTRY(flow) pointers;
 };
 
 void print_flow(struct flow * f);

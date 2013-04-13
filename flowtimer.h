@@ -35,12 +35,12 @@
 #include <syslog.h>
 #include <unistd.h>
 
-#include "flow.h"
 #include "rib.h"
+#include "flow.h"
 
-struct flow* flowtable;
 
 LIST_HEAD(routing_table, route) route_head;
+LIST_HEAD(flow_table, flow) flow_head;
 
 int update_count;
 

@@ -14,6 +14,7 @@ int main(int argc,char **argv) {
   bpf_u_int32 netp; /* ip */ 
   
   LIST_INIT(&route_head);
+  LIST_INIT(&flow_head);
 
   dev = "en1";
 
