@@ -48,8 +48,12 @@ struct timeval rtt_get(struct flow * f) {
   //return f.timestamp - curr.timestamp
   for(struct flow* curr = flowtable; curr != NULL; curr = curr->next) {
     if(f->ip_dst.s_addr == curr->ip_src.s_addr && f->ip_src.s_addr == curr->ip_dst.s_addr && curr->route == f->route) {
-      rtt.tv_sec = f->timestamp.tv_sec - curr->timestamp.tv_sec;
-      rtt.tv_usec = f->timestamp.tv_usec - curr->timestamp.tv_usec;
+      int64_t ftime = (f->timestamp.tv_sec * 1000000) + f->timestamp.tv_usec;
+      int64_t ctime = (curr->timestamp.tv_sec * 1000000) + curr->timestamp.tv_usec;
+
+      ftime = ftime-ctime;
+      rtt.tv_sec = ftime/1000000;
+      rtt.tv_usec = ftime%1000000;
 
       //remove curr from flow table
       if(curr->last == NULL) {

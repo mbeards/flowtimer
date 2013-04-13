@@ -2,6 +2,7 @@
 #define FLOWTIMER_PCAP_H
 
 #include "flowtimer.h"
+#include "rib.h"
 
 #define _BSD_SOURCE 1
 

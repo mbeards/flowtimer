@@ -39,6 +39,9 @@
 #include "rib.h"
 
 struct flow* flowtable;
-struct route* routingtable;
+
+LIST_HEAD(routing_table, route) route_head;
+
+int update_count;
 
 #endif

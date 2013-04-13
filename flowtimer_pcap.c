@@ -91,9 +91,10 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
 
 
     int match = match_flow(f);
-    /*if(match == 1) {
-      //fprintf(stdout, "Match forward\n");
-    } else*/ if (match == -1) {
+    if(match == 1) {
+      fprintf(stdout, "Match forward\n");
+    } else if (match == -1) {
+      update_count++;
       //Match, so remove from flow table and write out rtt
       //fprintf(stdout, "Match reverse\n");
       struct timeval rtt = rtt_get(f);
@@ -103,10 +104,20 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
       inet_ntop(AF_INET, &f->ip_dst, dst_str, INET_ADDRSTRLEN);
 
       fprintf(stdout, "%15s->%15s RTT: %ld.%ld\n",src_str, dst_str, rtt.tv_sec, rtt.tv_usec);
+
+      //add rtt
+      update_route(rtt.tv_sec, rtt.tv_usec, &f->ip_dst);
+
+
       free(f);
     } else {
       //No match, so add to flow table
       insert_flow(f);
+    }
+
+    if(update_count==5) {
+      update_count=0;
+      print_rib();
     }
   }
 }

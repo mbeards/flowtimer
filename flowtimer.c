@@ -13,6 +13,8 @@ int main(int argc,char **argv) {
   bpf_u_int32 maskp; /* subnet mask */ 
   bpf_u_int32 netp; /* ip */ 
   
+  LIST_INIT(&route_head);
+
   dev = "en1";
 
   printf("Listen on %s\n", dev);
@@ -27,6 +29,8 @@ int main(int argc,char **argv) {
     exit(1);
   } 
 
+
+  update_count = 0;
   
 /* ... and loop */ 
   int out = pcap_loop(descr,-1,pcap_callback,NULL); 
