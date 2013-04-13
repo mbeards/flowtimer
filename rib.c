@@ -8,7 +8,6 @@ void update_route(long int rtt_sec, long int rtt_usec, struct in_addr* address) 
 
   LIST_FOREACH(curr, &route_head, pointers) {
     if(curr->address.s_addr == address->s_addr) {
-      printf("match!\n");
       r = curr;
       //update the rtt
       int64_t rtt = (r->rtt_sec * 1000000) + r->rtt_usec;

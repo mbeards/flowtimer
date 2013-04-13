@@ -35,6 +35,5 @@ int main(int argc,char **argv) {
   
 /* ... and loop */ 
   int out = pcap_loop(descr,-1,pcap_callback,NULL); 
-  printf("%i\n", out);
   return 0; 
 } 

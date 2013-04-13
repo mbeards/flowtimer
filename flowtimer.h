@@ -2,6 +2,8 @@
 #define FLOWTIMER_H
 
 #define NOISY 0
+#define FORCE_PREFIX_SIZE 32 
+
 #include <pcap.h> 
 #include <stdio.h> 
 #include <string.h>
