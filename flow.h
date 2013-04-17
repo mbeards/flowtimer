@@ -3,12 +3,17 @@
 
 #include "flowtimer.h"
 
+#define F_OPEN 0
+#define F_MATCHED 1
+#define F_EXPIRE 2
+
 struct flow {
   struct in_addr ip_src;
   struct in_addr ip_dst;
   struct timeval timestamp;
   struct timeval last_seen;
   int route;
+  short expiry;
   LIST_ENTRY(flow) pointers;
 };
 

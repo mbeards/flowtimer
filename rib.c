@@ -5,9 +5,15 @@ void update_route(long int rtt_sec, long int rtt_usec, struct in_addr* address) 
   //find route that matches the address
   struct route* r;
   struct route* curr;
+  char addr_str[INET_ADDRSTRLEN];
+  char r_addr_str[INET_ADDRSTRLEN];
+
+  inet_ntop(AF_INET, address, addr_str, INET_ADDRSTRLEN);
 
   LIST_FOREACH(curr, &route_head, pointers) {
-    if(curr->address.s_addr == address->s_addr) {
+    short shamt = 32-curr->prefix;
+    inet_ntop(AF_INET, &curr->address, r_addr_str, INET_ADDRSTRLEN);
+    if(((unsigned long int)ntohl(curr->address.s_addr))>>shamt == ((unsigned long int)ntohl(address->s_addr))>>shamt) {
       r = curr;
       //update the rtt
       int64_t rtt = (r->rtt_sec * 1000000) + r->rtt_usec;
@@ -25,6 +31,7 @@ void update_route(long int rtt_sec, long int rtt_usec, struct in_addr* address) 
   memcpy(&r->address, address, sizeof(struct in_addr));
   r->rtt_sec = rtt_sec;
   r->rtt_usec = rtt_usec;
+  r->prefix = 24;
 
   LIST_INSERT_HEAD(&route_head, r, pointers);
 
