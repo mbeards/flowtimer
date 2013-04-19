@@ -17,7 +17,7 @@
 #define MAXIPLEN  60
 #define MAXICMPLEN  76
 
-
+void probe_flows();
 
 static void noresp(int ign);
 

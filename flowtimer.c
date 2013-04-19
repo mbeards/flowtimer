@@ -50,6 +50,11 @@ int main(int argc,char **argv) {
   update_count = 0;
   
 /* ... and loop */ 
-  int out = pcap_loop(descr,PACKET_COUNT,pcap_callback,NULL); 
+  while(1) {
+    int out = pcap_loop(descr,100,pcap_callback,NULL); 
+    //Do housekeeping
+    
+    probe_flows();
+  }
   return 0; 
 } 

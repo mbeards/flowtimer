@@ -14,6 +14,10 @@
 
 static char *hostname = NULL;
 
+void probe_flows() {
+  fprintf(stdout, "probing flows!\n");
+}
+
 static void noresp(int ign)
 {
   printf("No response from %s\n", hostname);
@@ -105,7 +109,7 @@ void ping(struct in_addr * addr) {
         break;
     }
   }
-  printf("%s is alive!\n", hostname);
+  printf("%s is alive!\n", inet_ntoa(addr));
   return;
 
 }
