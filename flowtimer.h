@@ -3,6 +3,7 @@
 
 #define NOISY 0
 #define FORCE_PREFIX_SIZE 32 
+#define PACKET_COUNT -1
 
 #include <pcap.h> 
 #include <stdio.h> 
@@ -45,5 +46,7 @@ LIST_HEAD(routing_table, route) route_head;
 LIST_HEAD(flow_table, flow) flow_head;
 
 int update_count;
+
+int endcount;
 
 #endif

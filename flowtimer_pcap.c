@@ -52,7 +52,8 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
 
     int match = match_flow(f);
     if(match == 1) {
-      fprintf(stdout, "Match forward\n");
+      if(NOISY) fprintf(stdout, "Match forward -- Need to update last_seen for f\n");
+      last_seen(f);
       //should update timeout here
     } else if (match == -1) {
       update_count++;
@@ -62,7 +63,7 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
       inet_ntop(AF_INET, &f->ip_src, src_str, INET_ADDRSTRLEN);
       char dst_str[INET_ADDRSTRLEN];
       inet_ntop(AF_INET, &f->ip_dst, dst_str, INET_ADDRSTRLEN);
-      fprintf(stdout, "%15s->%15s RTT: %ld.%ld\n",src_str, dst_str, rtt.tv_sec, rtt.tv_usec);
+      if(NOISY) fprintf(stdout, "%15s->%15s RTT: %ld.%ld\n",src_str, dst_str, rtt.tv_sec, rtt.tv_usec);
 
       //add rtt
       update_route(rtt.tv_sec, rtt.tv_usec, &f->ip_dst);
