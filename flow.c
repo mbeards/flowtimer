@@ -30,15 +30,12 @@ int match_flow(struct flow * f) {
         curr->expiry = F_OPEN;
         curr->timestamp= f->timestamp;
       }
-      fprintf(stdout, "traversed %i\n", traverse_size);
       return(1);
     } else if(f->ip_dst.s_addr == curr->ip_src.s_addr && f->ip_src.s_addr == curr->ip_dst.s_addr && curr->route == f->route && curr->expiry == F_OPEN) {
       curr->expiry = F_MATCHED;
-      fprintf(stdout, "traversed %i\n", traverse_size);
       return(-1);
     }
   }
-  fprintf(stdout, "traversed %i\n", traverse_size);
   return(0);
 }
 
