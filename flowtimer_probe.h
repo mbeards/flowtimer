@@ -13,6 +13,8 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 
+#include "flow.h"
+
 #define DEFDATALEN      56
 #define MAXIPLEN  60
 #define MAXICMPLEN  76

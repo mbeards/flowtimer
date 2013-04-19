@@ -15,7 +15,14 @@
 static char *hostname = NULL;
 
 void probe_flows() {
-  fprintf(stdout, "probing flows!\n");
+  struct flow* curr;
+  LIST_FOREACH(curr, &flow_head, pointers) {
+      fprintf(stdout, "probing ");
+      print_flow(curr);
+    //if(curr->expiry == F_EXPIRED) {
+      ping(&curr->ip_dst);
+    //}
+  }
 }
 
 static void noresp(int ign)
@@ -91,6 +98,7 @@ void ping(struct in_addr * addr) {
   alarm(5);         /* give the host 5000ms to respond */
 
   /* listen for replies */
+  inet_ntop(AF_INET, addr, hostname, INET_ADDRSTRLEN); 
   while (1) {
     struct sockaddr_in from;
     size_t fromlen = sizeof(from);
@@ -109,7 +117,7 @@ void ping(struct in_addr * addr) {
         break;
     }
   }
-  printf("%s is alive!\n", inet_ntoa(addr));
+  printf("%s is alive!\n", inet_ntoa(*addr));
   return;
 
 }
