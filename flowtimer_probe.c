@@ -132,3 +132,57 @@ void probe_request(struct route * r, struct in_addr * address) {
 
   LIST_INSERT_HEAD(&probe_head, p, pointers);
 }
+
+void send_probe(struct probe * p) {
+  if(p->status == P_SENT) {
+    return;
+  }
+  /* Probing process:
+   * 1. Make sockaddr_in from the struct probe
+   * LOAD CORRECT ROUTE INTO KERNEL FIB
+   * 2. Send the packet
+   * GO BACK TO OLD ROUTE IN KERNEL FIB
+   * 3. Mark the probe's timestamp
+   * 4. Mark the probe as P_SENT */
+  int c;
+  struct sockaddr_in pingaddr;
+  struct hostent *h;
+  struct icmp *pkt;
+  char packet[DEFDATALEN + MAXIPLEN + MAXICMPLEN];
+
+
+  memset(&pingaddr, 0, sizeof(struct sockaddr_in));
+  
+  pingaddr.sin_family = AF_INET;
+
+  memcpy(&pingaddr.sin_addr, &p->ip_dst, sizeof(pingaddr.sin_addr));
+
+  pkt = (struct icmp *) packet;
+  memset(pkt, 0, sizeof(packet));
+  pkt->icmp_type = ICMP_ECHO;
+  pkt->icmp_cksum = in_cksum((unsigned short *) pkt, sizeof(packet));
+
+  c = sendto(pingsock, packet, sizeof(packet), 0, (struct sockaddr *) &pingaddr, sizeof(struct sockaddr_in));
+
+  if (c < 0 || c != sizeof(packet)) {
+    if (c < 0)
+      perror("ping: sendto");
+    printf("write incomplete\n");
+    return;
+  }
+  p->status = P_SENT;
+
+  return;
+
+}
+
+void next_probe() {
+  if(LIST_FIRST(&probe_head)) {
+    struct probe * p = LIST_FIRST(&probe_head);
+    send_probe(p);
+    //FOR NOW WE DELETE THE PROBE.  DON'T ACTUALLY DO THIS
+    LIST_REMOVE(p, pointers);
+    free(p);
+  }
+
+}

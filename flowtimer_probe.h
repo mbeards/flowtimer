@@ -40,4 +40,9 @@ void ping(struct in_addr * addr);
 
 void probe_request(struct route * r, struct in_addr * address);
 
+void send_probe(struct probe* p);
+
+void next_probe();
+
+int pingsock;
 #endif

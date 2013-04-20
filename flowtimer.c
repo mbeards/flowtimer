@@ -27,6 +27,13 @@ int main(int argc,char **argv) {
 
   printf("Listen on %s\n", dev);
 
+  pingsock = socket(AF_INET, SOCK_RAW, 1);/* 1 == ICMP */ 
+
+  printf("set pingsock to %i\n", pingsock);
+  if (pingsock  < 0) {  
+    perror("ping: creating a raw socket");
+    exit(1);
+  }
  
   /* ask pcap for the network address and mask of the device */ 
   pcap_lookupnet(dev,&netp,&maskp,errbuf); 
@@ -68,6 +75,8 @@ int main(int argc,char **argv) {
     } else {
       fprintf(stdout, "loop with no select\n");
     }
+
+    next_probe();
     
     //probe_flows();
   }
