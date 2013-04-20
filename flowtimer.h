@@ -45,6 +45,7 @@
 
 LIST_HEAD(routing_table, route) route_head;
 LIST_HEAD(flow_table, flow) flow_head;
+LIST_HEAD(probe_table, probe) probe_head;
 
 int update_count;
 

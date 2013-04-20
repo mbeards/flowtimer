@@ -39,6 +39,29 @@ void update_route(long int rtt_sec, long int rtt_usec, struct in_addr* address) 
 
 }
 
+struct route * get_route(struct in_addr* address) {
+  struct route* r;
+  struct route* curr;
+  LIST_FOREACH(curr, &route_head, pointers) {
+    short shamt = 32-curr->prefix;
+    //make sure to switch to host byte order
+    if(((unsigned long int)ntohl(curr->address.s_addr))>>shamt == ((unsigned long int)ntohl(address->s_addr))>>shamt) {
+      return curr;
+    }
+  }
+
+  r = (struct route*)(malloc(sizeof(struct route)));
+  memcpy(&r->address, address, sizeof(struct in_addr));
+  r->rtt_sec = 9999999;
+  r->rtt_usec = 9999999;
+  r->prefix = 24;
+  LIST_INSERT_HEAD(&route_head, r, pointers);
+
+  return r;
+}
+
+
+
 
 
 void print_rib() {

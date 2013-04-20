@@ -19,6 +19,17 @@
 #define MAXIPLEN  60
 #define MAXICMPLEN  76
 
+#define P_UNSENT 0
+#define P_SENT 1
+
+struct probe {
+  struct in_addr ip_dst;
+  struct timeval timestamp;
+  struct route * route;
+  short status;
+  LIST_ENTRY(probe) pointers;
+};
+
 void probe_flows();
 
 static void noresp(int ign);
@@ -26,5 +37,7 @@ static void noresp(int ign);
 static int in_cksum(unsigned short *buf, int sz);
 
 void ping(struct in_addr * addr);
+
+void probe_request(struct route * r, struct in_addr * address);
 
 #endif

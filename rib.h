@@ -20,5 +20,5 @@ struct route {
 
 void update_route(long int rtt_sec, long int rtt_usec, struct in_addr* address);
 void print_rib();
-
+struct route* get_route(struct in_addr*);
 #endif

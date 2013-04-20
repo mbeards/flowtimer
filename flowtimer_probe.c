@@ -121,3 +121,14 @@ void ping(struct in_addr * addr) {
   return;
 
 }
+
+void probe_request(struct route * r, struct in_addr * address) {
+  struct probe * p = malloc(sizeof(struct probe));
+
+  memcpy(&p->ip_dst, address, sizeof(struct in_addr));
+  //Don't set timestamp here.  Set it when we dispatch
+  p->status = P_UNSENT;
+  p->route = r;
+
+  LIST_INSERT_HEAD(&probe_head, p, pointers);
+}

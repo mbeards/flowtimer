@@ -21,6 +21,7 @@ int match_flow(struct flow * f) {
       curr->expiry = F_EXPIRED;
       fprintf(stdout, "Expired flow: ");
       print_flow(curr);
+      probe_request(get_route(&f->ip_dst), &f->ip_dst);
     }
 
     if(f->ip_src.s_addr == curr->ip_src.s_addr && f->ip_dst.s_addr == curr->ip_dst.s_addr && curr->route == f->route) {
@@ -72,6 +73,7 @@ void last_seen(struct flow * f) {
   LIST_FOREACH(curr, &flow_head, pointers) {
     if(f->ip_dst.s_addr == curr->ip_dst.s_addr && f->ip_src.s_addr == curr->ip_src.s_addr && curr->route == f->route && curr->expiry != F_EXPIRED) {
       curr->last_seen = f->timestamp;
+      return;
     }
   }
 }
