@@ -15,11 +15,13 @@ void update_route(long int rtt_sec, long int rtt_usec, struct in_addr* address) 
     if(((unsigned long int)ntohl(curr->address.s_addr))>>shamt == ((unsigned long int)ntohl(address->s_addr))>>shamt) {
       r = curr;
       //update the rtt
-      int64_t rtt = (r->rtt_sec * 1000000) + r->rtt_usec;
-      int64_t new_rtt = (rtt_sec * 1000000) + rtt_usec;
+      uint64_t rtt = (r->rtt_sec * 1000000) + r->rtt_usec;
+      uint64_t new_rtt = (rtt_sec * 1000000) + rtt_usec;
 
       //Let's have ALPHA = 0.5 to simplify things for now
-      int64_t out_rtt = (new_rtt>>2) + (rtt>>2);
+      //uint64_t out_rtt = (new_rtt>>2) + (rtt>>2);
+      float alpha = .25;
+      uint64_t out_rtt = (new_rtt*alpha) + (1-alpha)*(rtt);
       r->rtt_sec = out_rtt/1000000;
       r->rtt_usec = out_rtt%1000000;
       return;

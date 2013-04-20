@@ -94,11 +94,11 @@ void ping(struct in_addr * addr) {
     exit(1);
   }
 
+  inet_ntop(AF_INET, addr, hostname, INET_ADDRSTRLEN); 
   signal(SIGALRM, noresp);
   alarm(5);         /* give the host 5000ms to respond */
 
   /* listen for replies */
-  inet_ntop(AF_INET, addr, hostname, INET_ADDRSTRLEN); 
   while (1) {
     struct sockaddr_in from;
     size_t fromlen = sizeof(from);

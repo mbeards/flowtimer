@@ -16,6 +16,8 @@ int main(int argc,char **argv) {
   bpf_u_int32 maskp; /* subnet mask */ 
   bpf_u_int32 netp; /* ip */ 
   struct bpf_program fp;
+  fd_set fdRead;
+  FD_ZERO(&fdRead);
   
   LIST_INIT(&route_head);
   LIST_INIT(&flow_head);
@@ -46,15 +48,26 @@ int main(int argc,char **argv) {
      return(2);
   }
 
+  int pcapfd = pcap_get_selectable_fd(descr);
+  FD_SET(pcapfd, &fdRead);
+
 
   update_count = 0;
+
+  //get fd
   
 /* ... and loop */ 
   while(1) {
-    int out = pcap_loop(descr,100,pcap_callback,NULL); 
-    //Do housekeeping
+    select(pcapfd+1, &fdRead, NULL, NULL, NULL);
+
+    if(FD_ISSET(pcapfd, &fdRead)) {
+    //read a full buffer of packets
+      int out = pcap_dispatch(descr,-1,pcap_callback,NULL); 
+    } else {
+      fprintf(stdout, "loop with no select\n");
+    }
     
-    probe_flows();
+    //probe_flows();
   }
   return 0; 
 } 
