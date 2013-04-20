@@ -55,6 +55,8 @@ int main(int argc,char **argv) {
   update_count = 0;
 
   //get fd
+  signal(SIGALRM, alarmhandle);
+  alarm(10);
   
 /* ... and loop */ 
   while(1) {
@@ -71,3 +73,8 @@ int main(int argc,char **argv) {
   }
   return 0; 
 } 
+
+void alarmhandle() {
+  print_rib();
+  alarm(10);
+}

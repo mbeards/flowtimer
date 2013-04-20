@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <syslog.h>
 #include <unistd.h>
 
@@ -48,5 +49,7 @@ LIST_HEAD(flow_table, flow) flow_head;
 int update_count;
 
 int endcount;
+
+void alarmhandle();
 
 #endif

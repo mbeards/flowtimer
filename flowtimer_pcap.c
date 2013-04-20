@@ -75,9 +75,5 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
       insert_flow(f);
     }
 
-    if(update_count==5) {
-      update_count=0;
-      print_rib();
-    }
   }
 }
