@@ -21,7 +21,12 @@ void update_route(long int rtt_sec, long int rtt_usec, struct in_addr* address) 
       //Let's have ALPHA = 0.5 to simplify things for now
       //uint64_t out_rtt = (new_rtt>>2) + (rtt>>2);
       float alpha = .25;
-      uint64_t out_rtt = (new_rtt*alpha) + (1-alpha)*(rtt);
+      uint64_t out_rtt;
+      if(r->rtt_sec > 1000) {
+        out_rtt = new_rtt;
+      } else {
+        out_rtt = (new_rtt*alpha) + (1-alpha)*(rtt);
+      }
       r->rtt_sec = out_rtt/1000000;
       r->rtt_usec = out_rtt%1000000;
       return;
@@ -52,8 +57,8 @@ struct route * get_route(struct in_addr* address) {
 
   r = (struct route*)(malloc(sizeof(struct route)));
   memcpy(&r->address, address, sizeof(struct in_addr));
-  r->rtt_sec = 9999999;
-  r->rtt_usec = 9999999;
+  r->rtt_sec = 9999;
+  r->rtt_usec = 9999;
   r->prefix = 24;
   LIST_INSERT_HEAD(&route_head, r, pointers);
 

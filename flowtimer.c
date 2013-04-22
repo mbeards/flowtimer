@@ -27,7 +27,7 @@ int main(int argc,char **argv) {
 
   printf("Listen on %s\n", dev);
 
-  pingsock = socket(AF_INET, SOCK_RAW, 1);/* 1 == ICMP */ 
+  pingsock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);/* 1 == ICMP */ 
 
   printf("set pingsock to %i\n", pingsock);
   if (pingsock  < 0) {  
@@ -57,6 +57,8 @@ int main(int argc,char **argv) {
 
   int pcapfd = pcap_get_selectable_fd(descr);
   FD_SET(pcapfd, &fdRead);
+  FD_SET(pingsock, &fdRead);
+  int selectval = pcapfd > pingsock ? pcapfd+1 : pingsock+1; //Select on biggest FD + 1
 
 
   update_count = 0;
@@ -67,18 +69,18 @@ int main(int argc,char **argv) {
   
 /* ... and loop */ 
   while(1) {
-    select(pcapfd+1, &fdRead, NULL, NULL, NULL);
+    select(selectval, &fdRead, NULL, NULL, NULL);
 
     if(FD_ISSET(pcapfd, &fdRead)) {
     //read a full buffer of packets
       int out = pcap_dispatch(descr,-1,pcap_callback,NULL); 
+    } else if (FD_ISSET(pingsock, &fdRead)) {
+      handle_probe(); 
     } else {
       fprintf(stdout, "loop with no select\n");
     }
 
     next_probe();
-    
-    //probe_flows();
   }
   return 0; 
 } 

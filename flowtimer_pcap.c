@@ -68,7 +68,6 @@ void pcap_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* p
       //add rtt
       update_route(rtt.tv_sec, rtt.tv_usec, &f->ip_dst);
 
-
       free(f);
     } else {
       //No match, so add to flow table

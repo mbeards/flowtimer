@@ -171,6 +171,7 @@ void send_probe(struct probe * p) {
     return;
   }
   p->status = P_SENT;
+  fprintf(stdout, "sent %i bytes\n", c);
 
   return;
 
@@ -185,4 +186,28 @@ void next_probe() {
     free(p);
   }
 
+}
+
+void handle_probe() {
+  int c;
+  struct sockaddr_in pingaddr;
+  struct hostent *h;
+  struct icmp *pkt;
+  char packet[DEFDATALEN + MAXIPLEN + MAXICMPLEN];
+  struct sockaddr_in from;
+  size_t fromlen = sizeof(from);
+
+  if ((c = recvfrom(pingsock, packet, sizeof(packet), 0, (struct sockaddr *) &from, &fromlen)) < 0) {
+    perror("ping: recvfrom");
+  }
+  fprintf(stdout, "**got %i bytes\n", c);
+  if (c >= 76) {      /* ip + icmp */
+    struct ip *iphdr = (struct iphdr *) packet;
+
+    pkt = (struct icmp *) (packet + (iphdr->ip_hl << 2)); /* skip ip hdr */
+    if (pkt->icmp_type == ICMP_ECHOREPLY)
+      printf("%s is alive!\n", inet_ntoa(from.sin_addr));
+  }
+  
+  return;
 }

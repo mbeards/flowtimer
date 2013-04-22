@@ -44,5 +44,7 @@ void send_probe(struct probe* p);
 
 void next_probe();
 
+void handle_probe();
+
 int pingsock;
 #endif

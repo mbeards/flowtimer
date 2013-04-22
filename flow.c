@@ -12,9 +12,9 @@ void print_flow(struct flow * f) {
 }
 
 int match_flow(struct flow * f) {
-  struct flow* curr;
+  struct flow* curr, *ftmp;
   int traverse_size = 0;
-  LIST_FOREACH(curr, &flow_head, pointers) {
+  LIST_FOREACH_SAFE(curr, &flow_head, pointers, ftmp) {
     traverse_size++;
     //Expire old flows
     if(curr->last_seen.tv_sec - curr->timestamp.tv_sec > F_EXPIRE_WINDOW) {
@@ -22,6 +22,8 @@ int match_flow(struct flow * f) {
       fprintf(stdout, "Expired flow: ");
       print_flow(curr);
       probe_request(get_route(&f->ip_dst), &f->ip_dst);
+      LIST_REMOVE(curr, pointers);
+      free(curr);
     }
 
     if(f->ip_src.s_addr == curr->ip_src.s_addr && f->ip_dst.s_addr == curr->ip_dst.s_addr && curr->route == f->route) {
@@ -34,6 +36,7 @@ int match_flow(struct flow * f) {
       return(1);
     } else if(f->ip_dst.s_addr == curr->ip_src.s_addr && f->ip_src.s_addr == curr->ip_dst.s_addr && curr->route == f->route && curr->expiry == F_OPEN) {
       curr->expiry = F_MATCHED;
+      //remove the flow from the flowtable
       return(-1);
     }
   }
